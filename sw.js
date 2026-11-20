@@ -1,7 +1,7 @@
 // Lets the game run with no internet once it has been opened: everything it
 // needs is kept on the tablet. A newer version, when there is internet, is
 // fetched quietly and used the next time the game is opened.
-const CACHE = 'tornado-alley-20261120080004';
+const CACHE = 'tornado-alley-20261120082656';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -18,6 +18,19 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET' || !e.request.url.startsWith(self.location.origin)) return;
+  // The game page itself: the newest from the internet when there is some
+  // (so a new version shows at once), the kept copy when there is not.
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then(async (r) => {
+          if (r.ok) await (await caches.open(CACHE)).put('./', r.clone());
+          return r;
+        })
+        .catch(() => caches.match('./').then((r) => r || new Response('Open the game once with internet first.', { status: 503 }))),
+    );
+    return;
+  }
   const fresh = fetch(e.request)
     .then(async (r) => {
       if (r.ok) await (await caches.open(CACHE)).put(e.request, r.clone());

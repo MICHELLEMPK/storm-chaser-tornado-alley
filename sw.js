@@ -1,7 +1,7 @@
 // Lets the game run with no internet once it has been opened: everything it
 // needs is kept on the tablet. A newer version, when there is internet, is
 // fetched quietly and used the next time the game is opened.
-const CACHE = 'tornado-alley-20261120083316';
+const CACHE = 'tornado-alley-20261120084447';
 const FILES = ['./', 'index.html', 'play.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 
 self.addEventListener('install', (e) => {
